@@ -10,7 +10,7 @@
 // | Author: Jun <gyxuehu@163.com>
 // +----------------------------------------------------------------------
 
-class update{
+class update_file{
     
     public $db;
     
@@ -132,6 +132,22 @@ class update{
      * */
     public function update_file()
     {
+        $dovecot_openssl = '/usr/local/dovecot/share/doc/dovecot/dovecot-openssl.cnf';
+        $this->op_file($dovecot_openssl,function($line){
+            if (trim($line) == '') {  
+                return $line;
+            }
+
+            if(preg_match("/CN=imap.example.com/",$line)){
+                $c = "CN=imap.{$this->domain}\n";
+            }else if(preg_match('/emailAddress=postmaster@example.com/',$line)){
+                $c = "emailAddress=postmaster@{$this->domain}\n";
+            }else{
+                $c = $line;
+            }
+            return $c;
+        });
+
         $amavisd_conf = '/etc/amavisd/amavisd.conf';
         $this->op_file($amavisd_conf,function($line){
             if (trim($line) == '') {  
@@ -200,11 +216,10 @@ dkim_key("'.$this->domain.'", "dkim", "/ewomail/dkim/mail.pem");
         //apache
         $apache_conf = '/ewomail/apache/conf/extra/httpd-vhosts.conf';
         $apache_str = "
-Listen 8000 
-Listen 8010
-Listen 8020
+Listen 80
+Listen 8080
 
-<VirtualHost *:8010>
+<VirtualHost *:8080>
 ServerName localhost
 DocumentRoot /ewomail/www/ewomail-admin/
 DirectoryIndex index.php index.html index.htm
@@ -216,23 +231,11 @@ Allow from All
 </Directory>
 </VirtualHost>
 
-<VirtualHost *:8000>
+<VirtualHost *:80>
 ServerName localhost
 DocumentRoot /ewomail/www/rainloop/
 DirectoryIndex index.php index.html index.htm
 <Directory /ewomail/www/rainloop/>
-Options +Includes -Indexes
-AllowOverride All
-Order Deny,Allow
-Allow from All
-</Directory>
-</VirtualHost>
-
-<VirtualHost *:8020>
-ServerName localhost
-DocumentRoot /ewomail/www/phpMyadmin/
-DirectoryIndex index.php index.html index.htm
-<Directory /ewomail/www/phpMyadmin/>
 Options +Includes -Indexes
 AllowOverride All
 Order Deny,Allow
@@ -244,7 +247,6 @@ Allow from All
         if(copy($apache_conf,$apache_conf.".backup")){
             file_put_contents($apache_conf,$apache_str);
         }
-        
     }
 
     public function op_file($file,$fun)
@@ -286,5 +288,5 @@ Allow from All
     
 }
 
-$update = new update($argv[1],$argv[2],$argv[3],$argv[4],$argv[5]);
+$update_file = new update_file($argv[1],$argv[2],$argv[3],$argv[4],$argv[5]);
 ?>
