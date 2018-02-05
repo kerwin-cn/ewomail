@@ -106,13 +106,13 @@ RUN chmod -R 700 /home/init_sql.php && \
     chmod -R 700 /home/entrypoint.sh && \
     rm -rf /ewomail/nginx
 
-ENV MYSQL_ROOT_PASSWORD=mysql \
-    MYSQL_MAIL_PASSWORD=123456 \
+ENV MYSQL_ROOT_PASSWORD=bWh0noQHZKJGD8Kr3 \
+    MYSQL_MAIL_PASSWORD=bWh0noQHZKJGD8Kr3 \
     URL='*:8080' \
     WEBMAIL_URL='*' \
-    TITLE='ewomail.com' \
-    COPYRIGHT='Copyright © 2016-2017 | ewomail.com 版权所有' \
-    ICP='ICP证：粤ICP备**********号' \
+    TITLE='geek.ink' \
+    COPYRIGHT='Copyright © 2018-2018 | geek.ink 版权所有' \
+    ICP='ICP证：鲁ICP备17054822号-1' \
     LANGUAGE='zh_CN' \
     MONIT_MAILSERVER='' \
     MONIT_MAIL_PORT='25' \
